@@ -75,6 +75,9 @@ def main():
     # writing output to parquet file
     t_df.write.parquet(S3_RESULT_OUTPUT_PATH)       
 
+if __name__ == '__main__':
+    main()
+
 
 
 
