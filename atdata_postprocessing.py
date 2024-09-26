@@ -9,10 +9,8 @@ import json
 from pyspark.sql import SparkSession
 import sys
 import argparse
-S3_PINNED_INPUT_PATH = 's3://ascend-oeidp-batch-pinning-input-074628058490-us-east-1/atdata_output/ATDATA_OEIDP/2405130A/20240917/20240917/without_P02/DATA/'
-S3_RAW_CLIENT_DATA_PATH='s3://ascend-oeidp-batch-pinning-input-074628058490-us-east-1/AtData/TOBEPINNED/AtData_OEIDP/2405130A/20240917/20240917/'
-S3_RESULT_OUTPUT_PATH='' ;
-def main():
+
+def main(S3_PINNED_INPUT_PATH,S3_RAW_CLIENT_DATA_PATH,S3_RESULT_OUTPUT_PATH):
 # Initialize Spark session
     spark = SparkSession.builder.appName("DataProcessing").getOrCreate()
 
@@ -76,7 +74,10 @@ def main():
     t_df.write.parquet(S3_RESULT_OUTPUT_PATH)       
 
 if __name__ == '__main__':
-    main()
+				S3_PINNED_INPUT_PATH = sys.argv[1]
+				S3_RAW_CLIENT_DATA_PATH = sys.argv[2]
+				S3_RESULT_OUTPUT_PATH 		= sys.argv[3]
+    main(S3_PINNED_INPUT_PATH,S3_RAW_CLIENT_DATA_PATH,S3_RESULT_OUTPUT_PATH)
 
 
 
