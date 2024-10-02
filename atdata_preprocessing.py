@@ -3,6 +3,7 @@ from pyspark.sql.functions import when, col, concat_ws, upper, max, md5, rank, r
 from pyspark.sql import functions as F
 from pyspark.sql.functions import col, count, lit
 import sys
+import boto3
 def main(S3_INPUT_DATA_PATH,S3_OUTPUT_DATA_PATH):
     spark                   = SparkSession.builder.appName("atdata_pre_process").getOrCreate()
     
@@ -31,7 +32,16 @@ def main(S3_INPUT_DATA_PATH,S3_OUTPUT_DATA_PATH):
                     )
     df = valid_df.withColumn("record_sequence_no", row_number().over(windowSpec)).withColumn("record_seq_no", col("record_sequence_no")).withColumn("full_zip",concat_ws(col("zip5"), col("zip4")))
 				df.write.parquet(S3_OUTPUT_DATA_PATH)
-
+    meta_data_txt = 'TOTAL RECORDS,'+str(t_df.count())+'\n'
+    meta_data_txt = meta_data_txt+'AMOUNT TO PIN,10%'+'\n'
+    meta_data_txt = meta_data_txt+'PINNING RATE,10%'+'\n'
+    meta_data_txt = meta_data_txt+'TRADE DATE'+datetime.now().strftime('%Y-%m-%d')+'\n'
+    meta_data_txt = meta_data_txt+'Batch Indentifier,1'
+    #s3://ascend-oeidp-batch-pinning-input-074628058490-us-east-1/AtData/TOBEPINNED/AtData_OEIDP/2405135A/20240927/20240927/_METADATA.txt
+    s3 = boto3.resource('s3')
+    object = s3.Object('ascend-oeidp-batch-pinning-input-074628058490-us-east-1', 'AtData/TOBEPINNED/AtData_OEIDP/2405135A/20240927/20240927/_METADATA.txt')
+    object.put(Body=meta_data_txt.encode('ascii))
+    
 if __name__ == '__main__':
 				S3_INPUT_DATA_PATH = sys.argv[1]
 				S3_OUTPUT_DATA_PATh =  sys.argv[2]
