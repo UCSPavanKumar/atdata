@@ -9,7 +9,7 @@ import json
 from pyspark.sql import SparkSession
 import sys
 import argparse
-
+import boto3
 def main(S3_PINNED_INPUT_PATH,S3_RAW_CLIENT_DATA_PATH,S3_RESULT_OUTPUT_PATH):
 # Initialize Spark session
     spark = SparkSession.builder.appName("DataProcessing").getOrCreate()
@@ -72,12 +72,8 @@ def main(S3_PINNED_INPUT_PATH,S3_RAW_CLIENT_DATA_PATH,S3_RESULT_OUTPUT_PATH):
     
     # writing output to parquet file
     t_df.write.parquet(S3_RESULT_OUTPUT_PATH)
-    meta_data_txt = ''
-    meta_data_txt = 'TOTAL RECORDS,'+str(t_df.count())+'\n'
-    meta_data_txt = 'AMOUNT TO PIN,10%'+'\n'
-    meta_data_txt = 'PINNING RATE,10%'+'\n'
-    meta_data_txt = 'TRADE DATE'+datetime.now().strftime('%Y-%m-%d')+'\n'
-    meta_data_txt = 'Batch Indentifier,1'+'\n'
+   
+    
 	#   RECORD_Partition_01,3500
 	# TOTAL RECORDS,3500
 	# AMOUNT TO PIN,10%
