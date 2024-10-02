@@ -71,8 +71,19 @@ def main(S3_PINNED_INPUT_PATH,S3_RAW_CLIENT_DATA_PATH,S3_RESULT_OUTPUT_PATH):
     t_df = t_df.groupBy('eid').agg(collect_list('first_emails').alias("emails"))
     
     # writing output to parquet file
-    t_df.write.parquet(S3_RESULT_OUTPUT_PATH)       
-
+    t_df.write.parquet(S3_RESULT_OUTPUT_PATH)
+    meta_data_txt = ''
+    meta_data_txt = 'TOTAL RECORDS,'+str(t_df.count())+'\n'
+    meta_data_txt = 'AMOUNT TO PIN,10%'+'\n'
+    meta_data_txt = 'PINNING RATE,10%'+'\n'
+    meta_data_txt = 'TRADE DATE'+datetime.now().strftime('%Y-%m-%d')+'\n'
+    meta_data_txt = 'Batch Indentifier,1'+'\n'
+	#   RECORD_Partition_01,3500
+	# TOTAL RECORDS,3500
+	# AMOUNT TO PIN,10%
+	# PINNING RATE,10%
+	# TRADE DATE, 2024-09-17
+	# Batch Identifier,1
 if __name__ == '__main__':
 				S3_PINNED_INPUT_PATH = sys.argv[1]
 				S3_RAW_CLIENT_DATA_PATH = sys.argv[2]
